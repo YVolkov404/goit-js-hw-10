@@ -2,6 +2,8 @@ import SlimSelect from 'slim-select';
 import { options } from './options';
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 const select = document.querySelector('.breed-select');
 const cardContainer = document.querySelector('.cat-info');
 
@@ -24,18 +26,19 @@ function onSelectCat(e) {
     .catch(err => {
       console.log(err);
     })
-    .finally(() => form.reset());
+    .finally();
 }
 
-// ++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// cat[name] :: check
-
-function catCardMarkup(cat) {
-  cardContainer.innerHTML = `
+function catCardMarkup(cats) {
+  return cats.map(cat => {
+    return (cardContainer.innerHTML = `
+      <img src="${cat.url}" alt="${cat.name}" width="500">
       <h1>${cat.name}</h1>
       <p>${cat.description}</p>
-      <p>${cat.temperament}</p>`;
+      <p>${cat.temperament}</p>`);
+  });
 }
 
 function addCatsToSelect(cats) {
