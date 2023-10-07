@@ -1,18 +1,50 @@
-import { TheCatAPI } from '@thatapicompany/thecatapi';
-// import SlimSelect from 'slim-select';
-// import { options } from './options';
-import { API_KEY } from './cat-api';
+import SlimSelect from 'slim-select';
+import { options } from './options';
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
-new TheCatAPI(API_KEY);
-
 const select = document.querySelector('.breed-select');
+const cardContainer = document.querySelector('.cat-info');
 
-select.addEventListener('change', onSelectItem);
+select.addEventListener('change', onSelectCat);
 
-fetchBreeds();
+fetchBreeds()
+  .then(cats => {
+    addCatsToSelect(cats);
+    new SlimSelect(options);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
-function onSelectItem(e) {
+function onSelectCat(e) {
+  e.preventDefault();
   const breedId = e.currentTarget.value;
-  fetchCatByBreed(breedId);
+  fetchCatByBreed(breedId)
+    .then(catCardMarkup)
+    .catch(err => {
+      console.log(err);
+    })
+    .finally(() => form.reset());
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++
+
+// cat[name] :: check
+
+function catCardMarkup(cat) {
+  cardContainer.innerHTML = `
+      <h1>${cat.name}</h1>
+      <p>${cat.description}</p>
+      <p>${cat.temperament}</p>`;
+}
+
+function addCatsToSelect(cats) {
+  cats.map(cat => {
+    const breed = cat.name;
+    const breedId = cat.id;
+    let el = document.createElement('option');
+    el.value = breedId;
+    el.innerHTML = `${breed}`;
+    select.appendChild(el);
+  });
 }
