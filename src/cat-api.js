@@ -5,10 +5,10 @@ const BASE_URL = 'https://api.thecatapi.com/v1';
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-axios.defaults.headers.common['x-api-key'] =
+const API_KEY =
   'live_hNeVtncoYhQORQAS6M1fUjhC25z26kfdSLTiO0dCs10SE7NPGdHbLN171ZujgRlw';
 
-const API_KEY =
+axios.defaults.headers.common['x-api-key'] =
   'live_hNeVtncoYhQORQAS6M1fUjhC25z26kfdSLTiO0dCs10SE7NPGdHbLN171ZujgRlw';
 
 const init = {

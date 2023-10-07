@@ -32,13 +32,15 @@ function onSelectCat(e) {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 function catCardMarkup(cats) {
-  return cats.map(cat => {
-    return (cardContainer.innerHTML = `
-      <img src="${cat.url}" alt="${cat.name}" width="500">
-      <h1>${cat.name}</h1>
-      <p>${cat.description}</p>
-      <p>${cat.temperament}</p>`);
-  });
+  const {
+    breeds: { name, description, temperament },
+    url,
+  } = cats;
+  return (cardContainer.innerHTML = `
+    <img src="${url}" alt="${name}" width="500">
+    <h1>${name}</h1>
+    <p>${description}</p>
+    <p>${temperament}</p>`);
 }
 
 function addCatsToSelect(cats) {
