@@ -1,50 +1,66 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SlimSelect from 'slim-select';
-import { options } from './options';
+import { slimSelectoptions, notifyOptions } from './options';
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
+import PreLoadState from './preLoadState';
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const select = document.querySelector('.breed-select');
 const cardContainer = document.querySelector('.cat-info');
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+const preLoadState = new PreLoadState({
+  selector: '.loader',
+});
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 select.addEventListener('change', onSelectCat);
 
 fetchBreeds()
   .then(cats => {
     addCatsToSelect(cats);
-    new SlimSelect(options);
+    new SlimSelect(slimSelectoptions);
+    preLoadState.hideLoaderOnAddCatsToSelect();
   })
   .catch(err => {
-    console.log(err);
+    Notify.warning(
+      'Oops! Something went wrong! Try reloading the page!',
+      notifyOptions
+    );
   });
 
 function onSelectCat(e) {
-  e.preventDefault();
   const breedId = e.currentTarget.value;
+  preLoadState.showLoaderOnSelectCat();
   fetchCatByBreed(breedId)
-    .then(catCardMarkup)
-    .catch(err => {
-      console.log(err);
+    .then(cats => {
+      catCardMarkup(cats);
+      preLoadState.hideLoaderOnSelectCat();
     })
-    .finally();
+    .catch(err => {
+      Notify.warning(
+        'Oops! Something went wrong! Try reloading the page!',
+        notifyOptions
+      );
+    });
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 function catCardMarkup(cats) {
-  const {
-    breeds: { name, description, temperament },
-    url,
-  } = cats;
+  const breeds = cats[0].breeds[0];
   return (cardContainer.innerHTML = `
-    <img src="${url}" alt="${name}" width="500">
-    <h1>${name}</h1>
-    <p>${description}</p>
-    <p>${temperament}</p>`);
+    <img src="${cats[0].url}" alt="${breeds.name}" width="500">
+    <h1 class="cat-info-subject">${breeds.name}</h1>
+    <p class="cat-info-text">${breeds.description}</p>
+    <p class="cat-info-desc">${breeds.temperament}</p>`);
 }
 
 function addCatsToSelect(cats) {
-  cats.map(cat => {
+  return cats.map(cat => {
     const breed = cat.name;
     const breedId = cat.id;
     let el = document.createElement('option');

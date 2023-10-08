@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ApiResponseError } from '@thatapicompany/thecatapi';
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const BASE_URL = 'https://api.thecatapi.com/v1';
 
@@ -29,13 +30,12 @@ export function fetchBreeds() {
 }
 
 export function fetchCatByBreed(breedId) {
-  return fetch(
-    `${BASE_URL}/images/search?breeds_ids=${breedId}&api_key=${API_KEY}`,
-    init
-  ).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
+  return fetch(`${BASE_URL}/images/search?breed_ids=${breedId}`, init).then(
+    response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      return response.json();
     }
-    return response.json();
-  });
+  );
 }
